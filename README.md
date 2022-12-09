@@ -6,8 +6,11 @@ Steps
 3. Create a .env file in project root specifying four variables: 
 
 IP_ADDR (your machine's public IP),
+
 PORT (the port you want to connect on, use 443 for HTTPS. Don't use HTTP because you will be sending sensitive information to your app lke your credentials), 
+
 RPC_PASS (the password defined in your bitcoin.conf to authorize rpc connections),
+
 RPC_USER (the user defined in bitcoin.conf for authorizing rpc connections)
 
 4. To connect using SSH you will need to create a certificate and private key for others to identify your machine and connect securely. Here is a good guide to do so (https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-apache-in-ubuntu-20-04). You can ignore the apache webserver part, because we will be using Node to create an HTTPS server
