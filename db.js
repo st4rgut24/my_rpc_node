@@ -32,14 +32,6 @@ db.serialize(function() {
     title TEXT NOT NULL, \
     completed INTEGER \
   )");
-  
-  // create an initial user (username: alice, password: letmein)
-  var salt = crypto.randomBytes(16);
-  db.run('INSERT OR IGNORE INTO users (username, hashed_password, salt) VALUES (?, ?, ?)', [
-    'alice',
-    crypto.pbkdf2Sync('letmein', salt, 310000, 32, 'sha256'),
-    salt
-  ]);
 });
 
 module.exports = db;

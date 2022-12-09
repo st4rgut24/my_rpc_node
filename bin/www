@@ -6,26 +6,41 @@
 
 var app = require('../app');
 var debug = require('debug')('todos:server');
-var http = require('http');
+var https = require('https');
+var fs = require('fs');
 
-/**
- * Get port from environment and store in Express.
- */
+// HTTP SERVER FOR TESTING
+/*
+var http = require('http');
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
-
 var server = http.createServer(app);
+server.listen(port);
+*/
+//
+
+// HTTPS server
+// sudo node ./bin/www
+port = process.env.PORT;
+
+const options = {
+  key: fs.readFileSync('/etc/ssl/private/apache-selfsigned.key'),
+  cert: fs.readFileSync('/etc/ssl/certs/apache-selfsigned.crt'),
+};
+
+app.set('port', port);
+
+var server = https.createServer(options, app);
+
+server.listen(port);
+//
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
