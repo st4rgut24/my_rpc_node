@@ -1,4 +1,4 @@
-Create your own app for your self-hosted bitcoin full node. 
+Host your own website for your self-hosted bitcoin full node. 
 
 Steps
 1. Get a Bitcoin Full Node up and running. There are many guides on how to do this online.
