@@ -1,45 +1,21 @@
-# todos-express-starter
+Host your own website for your self-hosted bitcoin full node. 
 
-This is a starter kit for building a todo app with sign in functionality using
-[Express](https://expressjs.com/), [Passport](https://www.passportjs.org/) and
-[SQLite](https://www.sqlite.org/).
+Steps
+1. Get a Bitcoin Full Node up and running. There are many guides on how to do this online.
+2. Git clone this repo in the same environment
+3. Create a .env file in project root specifying four variables: 
 
-The following is a list of complete, working example apps that have been built
-using this kit as a starting point.
+IP_ADDR (your machine's public IP),
 
-* [todos-express-password](https://github.com/passport/todos-express-password)
+PORT (the port you want to connect on, use 443 for HTTPS. Don't use HTTP because you will be sending sensitive information to your app lke your credentials), 
 
-  Illustrates how to sign in with a username and password.
+RPC_PASS (the password defined in your bitcoin.conf to authorize rpc connections),
 
-* [todos-express-password-flash](https://github.com/passport/todos-express-password-flash)
+RPC_USER (the user defined in bitcoin.conf for authorizing rpc connections)
 
-  Illustrates how to sign in with a username and password and use the flash for
-  informative messages.
+4. To connect using SSH you will need to create a certificate and private key for others to identify your machine and connect securely. Here is a good guide to do so (https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-apache-in-ubuntu-20-04). You can ignore the apache webserver part, because we will be using Node to create an HTTPS server
 
-* [todos-express-google](https://github.com/passport/todos-express-google)
-
-  Illustrates how to sign in with Google via OpenID Connect.
-
-* [todos-express-google-oauth2](https://github.com/passport/todos-express-google-oauth2)
-
-  Illustrates how to sign in with Google via OAuth 2.0.
-
-* [todos-express-email](https://github.com/passport/todos-express-email)
-
-  Illustrates how to sign in with email via magic link.
-
-* [todos-express-auth0](https://github.com/passport/todos-express-auth0)
-
-  Illustrates how to implement sign in by integrating with Auth0 via OpenID Connect.
-
-* [todos-express-openidconnect](https://github.com/passport/todos-express-openidconnect)
-
-  Illustrates how to implement sign in by integrating with an identity provider (IdP) via OpenID Connect.
-
-## License
-
-[The Unlicense](https://opensource.org/licenses/unlicense)
-
-## Credit
-
-Created by [Jared Hanson](https://www.jaredhanson.me/)
+5. In your router's firewall settings (and possibly also your computer's) port forward connections to port 443 or whatever port you specified to your local machine.
+6. Start the app using `sudo node ./bin/www` in project root
+7. Access your website via your network's public IP at the specified port.
+8. Enjoy!
