@@ -50,7 +50,7 @@
 							<td><%= prop %></td>
 							 <% if (typeof(data[prop]) === 'object') { %>
 								<td>
-									<a href=<%= process.env.IP_ADDR%><%=url %>/<%=prop %>>more</a>
+									<a href=<%=url %>/<%=prop %>>more</a>
 								</td>
 							 <% } else { %>
 								<td>
