@@ -21,7 +21,7 @@
 				</ul>
 			</nav>
 			<header class="header">
-				<h1>RPC</h1>
+				<h1><a href="/">RPC</a></h1>
 					<form action="/getnetworkinfo" method="get">
 						<button id="getnetworkinfo">get network info</button>
 					</form>
@@ -62,9 +62,50 @@
 				</table>
 			<% } %>
 		</section>
+		<canvas id="myChart" style="width:100%;max-width:700px"></canvas>
 		<footer class="info">
 			<p>Double-click to edit a todo</p>
 			<p>Authentication powered by <a href="https://www.passportjs.org">Passport</a></p>
 		</footer>
 	</body>
 </html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+</script>
+<script>
+	<% if (xValues) { %>
+		var yValuesStr = '<%- yValues %>';
+		var xValuesStr = '<%- xValues %>';
+		let xValues = JSON.parse(xValuesStr);
+		let yValues = JSON.parse(yValuesStr);
+		
+		console.log('x values', xValues);
+		console.log('y values', yValues);
+		new Chart("myChart", {
+		  type: "line",
+		  data: {
+			labels: xValues,
+			datasets: [{
+			  fill: false,
+			  lineTension: 0,
+			  backgroundColor: "rgba(0,0,255,1.0)",
+			  borderColor: "rgba(0,0,255,0.1)",
+			  data: yValues
+			}]
+		  },
+		  options: {
+			legend: {display: false},
+			scales: {
+			  yAxes: [{ticks: {min: 6, max:16}}],
+			}
+		  }
+		});	
+	<% } %>
+</script>
+<script>
+	// remove underline from links
+	var els = document.getElementsByTagName('a');
+
+	for (var el = 0; el < els.length; el++) {
+		els[el].style["text-decoration"] = "none";
+	}
+</script>

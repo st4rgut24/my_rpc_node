@@ -13,7 +13,8 @@ var fs = require('fs');
 /*
 var http = require('http');
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = '3000'; // testing
+
 app.set('port', port);
 
 var server = http.createServer(app);
@@ -23,6 +24,7 @@ server.listen(port);
 
 // HTTPS server
 // sudo node ./bin/www
+
 port = process.env.PORT;
 
 const options = {
@@ -35,6 +37,7 @@ app.set('port', port);
 var server = https.createServer(options, app);
 
 server.listen(port);
+
 //
 
 /**

@@ -1,27 +1,7 @@
 var express = require('express');
 var db = require('../db');
 var helper = require('../views/helper')
-
-function fetchTodos(req, res, next) {
-  db.all('SELECT * FROM todos WHERE owner_id = ?', [
-    req.user.id
-  ], function(err, rows) {
-    if (err) { return next(err); }
-    
-    var todos = rows.map(function(row) {
-      return {
-        id: row.id,
-        title: row.title,
-        completed: row.completed == 1 ? true : false,
-        url: '/' + row.id
-      }
-    });
-    res.locals.todos = todos;
-    res.locals.activeCount = todos.filter(function(todo) { return !todo.completed; }).length;
-    res.locals.completedCount = todos.length - res.locals.activeCount;
-    next();
-  });
-}
+var ChartMgr = require('../views/ChartMgr');
 
 var router = express.Router();
 
@@ -58,6 +38,8 @@ function sanitizeUrl(url) {
  * Set locals for ejs file such as the url, and the rpc objects
  */
 function setData(req, res, rpcData) {
+	// remove chart data
+	res.locals.xValues = null;
 	res.locals.url = sanitizeUrl(req.originalUrl);
 	// no params, just use the root level result
 	if (req.params.prop1 === undefined){
@@ -121,20 +103,12 @@ router.get('/getnettotals/:prop1?/:prop2?/:prop3?', function(req, res, next) {
 router.get('/', function(req, res, next) {
   if (!req.user) { return res.render('home'); }
   next();
-}, fetchTodos, function(req, res, next) {
+}, function(req, res, next) {
   res.locals.data = null;
-  res.render('index', { user: req.user });
-});
-
-router.get('/active', fetchTodos, function(req, res, next) {
-  res.locals.todos = res.locals.todos.filter(function(todo) { return !todo.completed; });
-  res.locals.filter = 'active';
-  res.render('index', { user: req.user });
-});
-
-router.get('/completed', fetchTodos, function(req, res, next) {
-  res.locals.todos = res.locals.todos.filter(function(todo) { return todo.completed; });
-  res.locals.filter = 'completed';
+  
+  res.locals.xValues = JSON.stringify(ChartMgr.networkChart.xArr);
+  res.locals.yValues = JSON.stringify(ChartMgr.networkChart.yArr);
+  console.log('updated chart with the latest values');
   res.render('index', { user: req.user });
 });
 
@@ -144,15 +118,6 @@ router.post('/', function(req, res, next) {
 }, function(req, res, next) {
   if (req.body.title !== '') { return next(); }
   return res.redirect('/' + (req.body.filter || ''));
-}, function(req, res, next) {
-  db.run('INSERT INTO todos (owner_id, title, completed) VALUES (?, ?, ?)', [
-    req.user.id,
-    req.body.title,
-    req.body.completed == true ? 1 : null
-  ], function(err) {
-    if (err) { return next(err); }
-    return res.redirect('/' + (req.body.filter || ''));
-  });
 });
 
 router.post('/:id(\\d+)', function(req, res, next) {
