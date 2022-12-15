@@ -20,27 +20,17 @@
 					</li>
 				</ul>
 			</nav>
-			<header class="header">
-				<h1><a href="/">RPC</a></h1>
-					<form action="/getnetworkinfo" method="get">
-						<button id="getnetworkinfo">get network info</button>
-					</form>
-					<form action="/getblockchaininfo" method="get">
-						<button id="getblockchaininfo">get blockchain info</button>
-					</form>	
-					<form action="/getpeerinfo" method="get">
-						<button id="getpeerinfo">get peer info</button>
-					</form>										
-					<form action="/getblockstats" method="get">
-						<button id="getblockstats">get latest block stats</button>
-					</form>	
-					<form action="/getmininginfo" method="get">
-						<button id="getmininginfo">get mining info</button>
-					</form>	
-					<form action="/getnettotals" method="get">
-						<button id="getnettotals">get net totals</button>
-					</form>				
+			<header>
+				<h1><a href="/">My Node</a></h1>
 			</header>
+		</section>
+		<section>
+			<a href="/getnetworkinfo" class="rpcaction" role="button">get network info</a>
+			<a href="/getblockchaininfo" class="rpcaction" role="button">get blockchain info</a>
+			<a href="/getpeerinfo" class="rpcaction" role="button">get peer info</a>
+			<a href="/getblockstats" class="rpcaction" role="button">get latest block stats</a>
+			<a href="/getmininginfo" class="rpcaction" role="button">get mining info</a>
+			<a href="/getnettotals" class="rpcaction" role="button">get net totals</a>
 		</section>
 		<section class="main">
 			<% if (data) { %>
@@ -64,41 +54,86 @@
 		</section>
 		<canvas id="myChart" style="width:100%;max-width:700px"></canvas>
 		<footer class="info">
-			<p>Double-click to edit a todo</p>
 			<p>Authentication powered by <a href="https://www.passportjs.org">Passport</a></p>
 		</footer>
 	</body>
 </html>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
-</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 	<% if (xValues) { %>
 		var yValuesStr = '<%- yValues %>';
+		var yValues2Str = '<%- yValues2 %>';
+		
 		var xValuesStr = '<%- xValues %>';
+		var yTitle = '<%- yTitle %>';
+		
 		let xValues = JSON.parse(xValuesStr);
 		let yValues = JSON.parse(yValuesStr);
+		let yValues2 = JSON.parse(yValues2Str);
 		
 		console.log('x values', xValues);
 		console.log('y values', yValues);
-		new Chart("myChart", {
-		  type: "line",
-		  data: {
-			labels: xValues,
-			datasets: [{
-			  fill: false,
-			  lineTension: 0,
-			  backgroundColor: "rgba(0,0,255,1.0)",
+		
+		const data = {
+		  labels: xValues,
+		  datasets: [
+			{
+			  label: 'inbound connections',
+			  data: yValues,
 			  borderColor: "rgba(0,0,255,0.1)",
-			  data: yValues
-			}]
-		  },
-		  options: {
-			legend: {display: false},
-			scales: {
-			  yAxes: [{ticks: {min: 6, max:16}}],
+			  yAxisID: 'y',
+			},
+			{
+			  label: 'outbound connections',
+			  data: yValues2,
+			  borderColor: "rgba(255,0,0,0.1)",
+			  yAxisID: 'y1',
 			}
-		  }
-		});	
+		  ]
+		};		
+		
+		const config = {
+		  type: 'line',
+		  data: data,
+		  options: {
+			responsive: true,
+			interaction: {
+			  mode: 'index',
+			  intersect: false,
+			},
+			stacked: false,
+			plugins: {
+			  title: {
+				display: true,
+				text: 'Peer Connections'
+			  }
+			},
+			scales: {
+			  y: {
+				beginAtZero: true,
+				stepSize: 1,
+				type: 'linear',
+				display: true,
+				position: 'left',
+			  },
+			  y1: {
+				beginAtZero: true,
+				stepSize: 1,
+				type: 'linear',
+				display: true,
+				position: 'right',
+
+				// grid line settings
+				grid: {
+				  drawOnChartArea: false, // only want the grid lines for one axis to show up
+				},
+			  },
+			}
+		  },
+		};		
+		
+		new Chart("myChart", config);	
+		
 	<% } %>
 </script>
 <script>

@@ -105,9 +105,14 @@ router.get('/', function(req, res, next) {
   next();
 }, function(req, res, next) {
   res.locals.data = null;
+  console.log('x arr', ChartMgr.networkChart.xArr);
+  console.log('y arr', ChartMgr.networkChart.yArr);
   
+  res.locals.yTitle = ChartMgr.networkChart.title;
   res.locals.xValues = JSON.stringify(ChartMgr.networkChart.xArr);
   res.locals.yValues = JSON.stringify(ChartMgr.networkChart.yArr);
+  res.locals.yValues2 = JSON.stringify(ChartMgr.networkChart.yArr2);
+  
   console.log('updated chart with the latest values');
   res.render('index', { user: req.user });
 });
@@ -118,60 +123,6 @@ router.post('/', function(req, res, next) {
 }, function(req, res, next) {
   if (req.body.title !== '') { return next(); }
   return res.redirect('/' + (req.body.filter || ''));
-});
-
-router.post('/:id(\\d+)', function(req, res, next) {
-  req.body.title = req.body.title.trim();
-  next();
-}, function(req, res, next) {
-  if (req.body.title !== '') { return next(); }
-  db.run('DELETE FROM todos WHERE id = ? AND owner_id = ?', [
-    req.params.id,
-    req.user.id
-  ], function(err) {
-    if (err) { return next(err); }
-    return res.redirect('/' + (req.body.filter || ''));
-  });
-}, function(req, res, next) {
-  db.run('UPDATE todos SET title = ?, completed = ? WHERE id = ? AND owner_id = ?', [
-    req.body.title,
-    req.body.completed !== undefined ? 1 : null,
-    req.params.id,
-    req.user.id
-  ], function(err) {
-    if (err) { return next(err); }
-    return res.redirect('/' + (req.body.filter || ''));
-  });
-});
-
-router.post('/:id(\\d+)/delete', function(req, res, next) {
-  db.run('DELETE FROM todos WHERE id = ? AND owner_id = ?', [
-    req.params.id,
-    req.user.id
-  ], function(err) {
-    if (err) { return next(err); }
-    return res.redirect('/' + (req.body.filter || ''));
-  });
-});
-
-router.post('/toggle-all', function(req, res, next) {
-  db.run('UPDATE todos SET completed = ? WHERE owner_id = ?', [
-    req.body.completed !== undefined ? 1 : null,
-    req.user.id
-  ], function(err) {
-    if (err) { return next(err); }
-    return res.redirect('/' + (req.body.filter || ''));
-  });
-});
-
-router.post('/clear-completed', function(req, res, next) {
-  db.run('DELETE FROM todos WHERE owner_id = ? AND completed = ?', [
-    req.user.id,
-    1
-  ], function(err) {
-    if (err) { return next(err); }
-    return res.redirect('/' + (req.body.filter || ''));
-  });
 });
 
 module.exports = router;
